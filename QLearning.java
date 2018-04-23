@@ -5,7 +5,7 @@ import java.util.Random;
 import jdk.nashorn.internal.ir.ReturnNode;
 
 public class QLearning {
-    public static final double EPSILON = 0.3;
+    public static final double EPSILON = 0.4;
     public static final double ALPHA = 0.1;
     public static final double GAMMA = 0.9;
     public static final int GOAL_REWARD = 100;
@@ -15,16 +15,15 @@ public class QLearning {
     public static final int INIT_Q_MAX = 30;
 
     public static final int MAZE[][] = {
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 1, 0, 1, 1, 1, 1, 1, 1, 0},
-        {0, 1, 1, 1, 0, 1, 1, 0, 1, 0},
-        {0, 0, 0, 1, 0, 1, 0, 0, 1, 0},
-        {0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-        {0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
-        {0, 1, 0, 1, 0, 1, 1, 1, 1, 0},
-        {0, 1, 0, 0, 0, 1, 0, 0, 1, 0},
-        {0, 1, 1, 1, 1, 1, 1, 0, 1, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 1, 0, 1, 0, 1, 0, 0, 0},
+        {0, 1, 0, 1, 1, 1, 0, 1, 0},
+        {0, 1, 0, 1, 0, 0, 0, 1, 0},
+        {0, 1, 1, 1, 0, 1, 1, 1, 0},
+        {0, 1, 0, 1, 1, 1, 0, 1, 0},
+        {0, 1, 0, 1, 0, 1, 0, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
     };
 
     public double q[][][];
@@ -44,7 +43,7 @@ public class QLearning {
     private ArrayList<String> route;
 
     QLearning() {
-        q = new double[10][10][4];
+        q = new double[9][9][4];
 
         posX = 1;
         posY = 1;
@@ -74,14 +73,14 @@ public class QLearning {
                 learn.updeteQ(reward, action);
                 learn.updateState();
 
-                isGoal = (learn.posX == 8 && learn.posY == 8);
+                isGoal = (learn.posX == 7 && learn.posY == 7);
             }
 
             if (learn.stepNum < minStepNum) {
                 minStepNum = learn.stepNum;
             }
             // shortest path
-            if (learn.stepNum == 22) {
+            if (learn.stepNum == 14) {
                 minStepNum = learn.stepNum;
 
                 learn.printQ();
@@ -91,15 +90,18 @@ public class QLearning {
                 System.out.println("LEARNING TIMES：" + i + "　STEP FOR GOAL:" + learn.stepNum + "　SHORTEST STEP:" + minStepNum);
                 break;
             }
-            System.out.println("LEARNING_TIMES：" + i + "　STEP FOR GOAL:" + learn.stepNum + "　SHORTEST STEP:" + minStepNum);
+
+            if (i % 100 == 0) {
+                System.out.println("LEARNING_TIMES：" + i + "　STEP FOR GOAL:" + learn.stepNum + "　SHORTEST STEP:" + minStepNum);
+            }
         }
     }
     
     public void initQ() {
         // 0~INIT_Q_MAX
         Random rand = new Random();
-        for (int x=0; x<10; x++) {
-            for (int y=0; y<10; y++) {
+        for (int x=0; x<9; x++) {
+            for (int y=0; y<9; y++) {
                 for (int a=0; a<4; a++) {
                     int randNum = rand.nextInt(INIT_Q_MAX+1);
                     q[x][y][a] = randNum;
@@ -181,7 +183,7 @@ public class QLearning {
                 break;
         }
 
-        boolean isGoal = (observedPosX==8 && observedPosY==8);
+        boolean isGoal = (observedPosX==7 && observedPosY==7);
         if (isGoal) {
             reward = GOAL_REWARD;
         }
@@ -207,8 +209,8 @@ public class QLearning {
     }
 
     public void printQ() {
-        for (int x=0; x<10; x++) {
-            for (int y=0; y<10; y++) {
+        for (int x=0; x<9; x++) {
+            for (int y=0; y<9; y++) {
                 for (int a=0; a<4; a++) {
                     System.out.println("x:" + x + " y:" + y + " a:" + a + " Q:" + q[x][y][a]);
                 }
